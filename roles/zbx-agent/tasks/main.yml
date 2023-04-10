@@ -1,0 +1,42 @@
+---
+- name: Ubuntu Install Zabbix Agent
+  apt:
+    name=zabbix-agent
+    state=latest
+  when:
+    ansible_os_family == "Debian"
+  notify:
+    - zbx-agent systemd
+
+- name: Allow all access to tcp port 10050/tcp
+  ufw:
+    rule: allow
+    port: '10050'
+    proto: tcp
+  when:
+    ansible_os_family == "Debian"
+
+- name: Setting hostname in zabbix_agentd.conf
+  lineinfile:
+    dest: /etc/zabbix/zabbix_agentd.conf
+    regexp: ^Hostname=.*
+    insertafter: ^# Hostname=
+    line: Hostname={{ ansible_hostname }}
+  when:
+    ansible_os_family == "Debian"
+
+- name: Setting server in zabbix_agentd.conf
+  lineinfile:
+    dest: /etc/zabbix/zabbix_agentd.conf
+    regexp: ^Server=.*
+    line: Server=10.10.0.15
+  when:
+    ansible_os_family == "Debian"
+
+- name: Setting serveractive in zabbix_agentd.conf
+  lineinfile:
+    dest: /etc/zabbix/zabbix_agentd.conf
+    regexp: ^ServerActive=.*
+    line: ServerActive=10.10.0.15
+  when:
+    ansible_os_family == "Debian"

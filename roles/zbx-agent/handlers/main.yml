@@ -1,0 +1,6 @@
+---
+- name: zbx-agent systemd
+  systemd:
+    name: zabbix-agent
+    enabled: yes
+    state: started
